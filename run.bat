@@ -1,4 +1,4 @@
 @echo off
 pushd build
-sergen.exe ../example/test.md
+sergen.exe ../example/test.mdesk
 popd
