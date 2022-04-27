@@ -1,0 +1,41 @@
+version(2);
+project_name = "sergen";
+patterns = {
+    "*.c",
+    "*.cpp",
+    "*.h",
+    "*.m",
+    "*.bat",
+    "*.sh",
+    "*.4coder",
+};
+blacklist_patterns = {
+    ".*",
+};
+load_paths_base = {
+    { ".", .relative = true, .recursive = true, },
+};
+load_paths = {
+    .win = load_paths_base,
+    .linux = load_paths_base,
+    .mac = load_paths_base,
+};
+
+commands = {
+    .build = { .out = "*compilation*", .footer_panel = true, .save_dirty_files = true,
+        .win = "build.bat",
+        .linux = "./build.sh",
+        .mac = "./build.sh", },
+    .build_test = { .out = "*compilation*", .footer_panel = true, .save_dirty_files = true,
+        .win = "build_test.bat",
+        .linux = "./build_test.sh",
+        .mac = "./build_test.sh", },
+    .run = { .out = "*run*", .footer_panel = false, .save_dirty_files = false,
+        .win = "build\\sergen",
+        .linux = "build/sergen",
+        .mac = "build/sergen", },
+};
+fkey_command = {
+    .F1 = "build",
+    .F2 = "build_test",
+};
