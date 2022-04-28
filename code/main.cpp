@@ -188,8 +188,7 @@ ProcessParsedResult(MD_Arena *arena, MD_Node *node, MD_Map *types_map)
                     // NOTE(fakhri): add a field for the variant
                     {
                         FieldInfo *struct_vairant_field = MD_PushArrayZero(arena, FieldInfo, 1);
-                        MD_String8 variant_name = MD_S8Fmt(arena, "%.*s%.*s", MD_S8VArg(type_info->name), MD_S8VArg(variant_node->string));
-                        struct_vairant_field->name = MD_S8Stylize(arena, variant_name, MD_IdentifierStyle_LowerCase, MD_S8Lit("_"));
+                        struct_vairant_field->name = MD_S8Stylize(arena, variant_node->string, MD_IdentifierStyle_LowerCase, MD_S8Lit("_"));
                         struct_vairant_field->type = struct_variant;
                         MD_QueuePush(type_info->first_field, type_info->last_field, struct_vairant_field);
                     }
@@ -477,7 +476,7 @@ int main(int argc, char **argv)
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#endif\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#ifndef SG_BUFFER_FREE_SIZE\n"));
-                MD_S8ListPush(sg_arena, &stream, MD_S8Lit("# erro Definition for SG_BUFFER_FREE_SIZE(buffer) was not provided\n"));
+                MD_S8ListPush(sg_arena, &stream, MD_S8Lit("# error Definition for SG_BUFFER_FREE_SIZE(buffer) was not provided\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#endif\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#ifndef SG_BUFFER_SIZE\n"));
@@ -496,7 +495,7 @@ int main(int argc, char **argv)
                             MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#ifndef "));
                             MD_S8ListPush(sg_arena, &stream, type_info->macro_alias);
                             MD_S8ListPush(sg_arena, &stream, MD_S8Lit("\n"));
-                            MD_S8ListPush(sg_arena, &stream, MD_S8Lit("# error Definiton for "));
+                            MD_S8ListPush(sg_arena, &stream, MD_S8Lit("# error Definition for "));
                             MD_S8ListPush(sg_arena, &stream, type_info->macro_alias);
                             MD_S8ListPush(sg_arena, &stream, MD_S8Lit(" was not provided\n"));
                             MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#endif\n"));
@@ -866,4 +865,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-/*
+*/

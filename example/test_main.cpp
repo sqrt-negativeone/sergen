@@ -97,14 +97,14 @@ int main()
     MyBuffer buffer = MakeBuffer(buf, sizeof(buf));
     MyUnionType my_union = {};
     my_union.kind = MyUnionTypeKind_Option1;
-    my_union.my_union_type_option1.x = 1;
-    my_union.my_union_type_option1.y = 2;
-    my_union.my_union_type_option1.z = 3;
+    my_union.option1.x = 1;
+    my_union.option1.y = 2;
+    my_union.option1.z = 3;
     printf("my_union\n\tkind: %d\n\tx: %f\n\ty: %f\n\tz: %f\n", 
            my_union.kind,
-           my_union.my_union_type_option1.x,
-           my_union.my_union_type_option1.y,
-           my_union.my_union_type_option1.z);
+           my_union.option1.x,
+           my_union.option1.y,
+           my_union.option1.z);
     
     SG_Serialize_MyUnionType(&buffer, &my_union);
     
@@ -112,14 +112,14 @@ int main()
     MyUnionType my_other_union = {};
     SG_Deserialize_MyUnionType(&buffer, &my_other_union);
     Assert(my_other_union.kind == MyUnionTypeKind_Option1);
-    Assert(my_other_union.my_union_type_option1.x == 1);
-    Assert(my_other_union.my_union_type_option1.y == 2);
-    Assert(my_other_union.my_union_type_option1.z == 3);
+    Assert(my_other_union.option1.x == 1);
+    Assert(my_other_union.option1.y == 2);
+    Assert(my_other_union.option1.z == 3);
     printf("my_other_union\n\tkind: %d\n\tx: %f\n\ty: %f\n\tz: %f\n", 
            my_other_union.kind,
-           my_other_union.my_union_type_option1.x,
-           my_other_union.my_union_type_option1.y,
-           my_other_union.my_union_type_option1.z);
+           my_other_union.option1.x,
+           my_other_union.option1.y,
+           my_other_union.option1.z);
     
     printf("test passed");
 }

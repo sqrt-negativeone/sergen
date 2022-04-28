@@ -19,7 +19,7 @@
 typedef SG_BUFFER_TYPE SG_Buffer;
 
 #ifndef SG_WRITE_TO_BUFFER
-# error Definitino For SG_WRITE_TO_BUFFER(buffer, src, nbytes) was not provided
+# error Definition For SG_WRITE_TO_BUFFER(buffer, src, nbytes) was not provided
 #endif
 
 #ifndef SG_READ_FROM_BUFFER
@@ -27,7 +27,7 @@ typedef SG_BUFFER_TYPE SG_Buffer;
 #endif
 
 #ifndef SG_BUFFER_FREE_SIZE
-# erro Definition for SG_BUFFER_FREE_SIZE(buffer) was not provided
+# error Definition for SG_BUFFER_FREE_SIZE(buffer) was not provided
 #endif
 
 #ifndef SG_BUFFER_SIZE
@@ -36,43 +36,43 @@ typedef SG_BUFFER_TYPE SG_Buffer;
 
 // Base Types
 #ifndef SG_u8_TYPE
-# error Definiton for SG_u8_TYPE was not provided
+# error Definition for SG_u8_TYPE was not provided
 #endif
 typedef SG_u8_TYPE SG_u8;
 #ifndef SG_u16_TYPE
-# error Definiton for SG_u16_TYPE was not provided
+# error Definition for SG_u16_TYPE was not provided
 #endif
 typedef SG_u16_TYPE SG_u16;
 #ifndef SG_u32_TYPE
-# error Definiton for SG_u32_TYPE was not provided
+# error Definition for SG_u32_TYPE was not provided
 #endif
 typedef SG_u32_TYPE SG_u32;
 #ifndef SG_u64_TYPE
-# error Definiton for SG_u64_TYPE was not provided
+# error Definition for SG_u64_TYPE was not provided
 #endif
 typedef SG_u64_TYPE SG_u64;
 #ifndef SG_i8_TYPE
-# error Definiton for SG_i8_TYPE was not provided
+# error Definition for SG_i8_TYPE was not provided
 #endif
 typedef SG_i8_TYPE SG_i8;
 #ifndef SG_i16_TYPE
-# error Definiton for SG_i16_TYPE was not provided
+# error Definition for SG_i16_TYPE was not provided
 #endif
 typedef SG_i16_TYPE SG_i16;
 #ifndef SG_i32_TYPE
-# error Definiton for SG_i32_TYPE was not provided
+# error Definition for SG_i32_TYPE was not provided
 #endif
 typedef SG_i32_TYPE SG_i32;
 #ifndef SG_i64_TYPE
-# error Definiton for SG_i64_TYPE was not provided
+# error Definition for SG_i64_TYPE was not provided
 #endif
 typedef SG_i64_TYPE SG_i64;
 #ifndef SG_f32_TYPE
-# error Definiton for SG_f32_TYPE was not provided
+# error Definition for SG_f32_TYPE was not provided
 #endif
 typedef SG_f32_TYPE SG_f32;
 #ifndef SG_f64_TYPE
-# error Definiton for SG_f64_TYPE was not provided
+# error Definition for SG_f64_TYPE was not provided
 #endif
 typedef SG_f64_TYPE SG_f64;
 
@@ -120,8 +120,8 @@ struct MyUnionType
 	MyUnionTypeKind kind;
 	union
 	{
-		MyUnionType_Option1 my_union_type_option1;
-		MyUnionType_Option2 my_union_type_option2;
+		MyUnionType_Option1 option1;
+		MyUnionType_Option2 option2;
 	};
 };
 

@@ -93,8 +93,8 @@ SG_Serialize_MyUnionType(SG_Buffer *buffer, MyUnionType *s)
 	SG_Serialize_MyUnionTypeKind(buffer, &s->kind);
 	switch(s->kind)
 	{
-		case MyUnionTypeKind_Option1: SG_Serialize_MyUnionType_Option1(buffer, &s->my_union_type_option1); break;
-		case MyUnionTypeKind_Option2: SG_Serialize_MyUnionType_Option2(buffer, &s->my_union_type_option2); break;
+		case MyUnionTypeKind_Option1: SG_Serialize_MyUnionType_Option1(buffer, &s->option1); break;
+		case MyUnionTypeKind_Option2: SG_Serialize_MyUnionType_Option2(buffer, &s->option2); break;
 	}
 }
 
@@ -213,8 +213,8 @@ SG_Deserialize_MyUnionType(SG_Buffer *buffer, MyUnionType *s)
 	SG_Deserialize_MyUnionTypeKind(buffer, &s->kind);
 	switch(s->kind)
 	{
-		case MyUnionTypeKind_Option1: SG_Deserialize_MyUnionType_Option1(buffer, &s->my_union_type_option1); break;
-		case MyUnionTypeKind_Option2: SG_Deserialize_MyUnionType_Option2(buffer, &s->my_union_type_option2); break;
+		case MyUnionTypeKind_Option1: SG_Deserialize_MyUnionType_Option1(buffer, &s->option1); break;
+		case MyUnionTypeKind_Option2: SG_Deserialize_MyUnionType_Option2(buffer, &s->option2); break;
 	}
 }
 
