@@ -19,6 +19,7 @@ enum
 };
 
 
+typedef struct FieldInfo FieldInfo;
 struct FieldInfo
 {
     FieldInfo *next;
@@ -29,6 +30,7 @@ struct FieldInfo
     MD_String8 array_len;
 };
 
+typedef struct TypeInfo TypeInfo;
 struct TypeInfo
 {
     // NOTE(fakhri): for linked list use
