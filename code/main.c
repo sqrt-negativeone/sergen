@@ -1,5 +1,6 @@
 // LICENSE AT END OF FILE (MIT).
 
+
 #include "third_party/third_party_inc.h"
 #include "third_party/third_party_inc.cpp"
 
@@ -75,9 +76,13 @@ SG_PushMessageList(MD_Arena *arena, MD_MessageList *list, MD_MessageKind kind, c
 internal TypeInfo *
 GetTypeInfoFromMap_ByStr(MD_Map *map, MD_String8 string)
 {
+    TypeInfo *result = 0;
     MD_MapKey key = MD_MapKeyStr(string);
     MD_MapSlot *slot = MD_MapLookup(map, key);
-    TypeInfo *result = (TypeInfo *)slot->val;
+    if (slot)
+    {
+        result = (TypeInfo *)slot->val;
+    }
     return result;
 }
 
@@ -114,7 +119,7 @@ ProcessStructFieldNode(MD_Arena *arena, MD_Map *types_map, TypeInfo *type_info, 
         {
             // NOTE(fakhri): couldn't find type
             SG_PushMessageList(arena, message_list, MD_MessageKind_Error, 
-                               "Type %.*s is not declared in file", MD_S8VArg(field_type_node->string));
+                               "Type %.*s is not declared anywhere in file", MD_S8VArg(field_type_node->string));
         }
     }
     else
@@ -133,38 +138,47 @@ ProcessParsedResult(MD_Arena *arena, MD_Node *node, MD_Map *types_map)
     // NOTE(fakhri): higher information gathering about types
     for(MD_EachNode(type_node, node->first_child))
     {
-        TypeInfo *type_info = MD_PushArrayZero(arena, TypeInfo, 1);
-        MD_MapInsert(arena, types_map, MD_MapKeyStr(type_node->string), type_info);
-        type_info->node = type_node;
-        type_info->name = MD_S8Copy(arena, type_node->string);
-        if (MD_NodeHasTag(type_node, MD_S8Lit("base"), 0))
+        TypeInfo *type_info = GetTypeInfoFromMap_ByStr(types_map, type_node->string);
+        if (type_info == 0)
         {
-            type_info->kind = TypeInfoKind_Base;
-            type_info->macro_alias = MD_S8Fmt(arena, "SG_%.*s_TYPE", MD_S8VArg(type_node->string));
-            type_info->typedef_alias = MD_S8Fmt(arena, "SG_%.*s", MD_S8VArg(type_node->string));
-        }
-        else if (MD_NodeHasTag(type_node, MD_S8Lit("struct"), 0))
-        {
-            type_info->kind = TypeInfoKind_Struct;
-        }
-        else if (MD_NodeHasTag(type_node, MD_S8Lit("enum"), 0))
-        {
-            type_info->kind = TypeInfoKind_Enum;
-        }
-        else if (MD_NodeHasTag(type_node, MD_S8Lit("union"), 0))
-        {
-            type_info->kind = TypeInfoKind_Union;
+            type_info = MD_PushArrayZero(arena, TypeInfo, 1);
+            MD_MapInsert(arena, types_map, MD_MapKeyStr(type_node->string), type_info);
+            type_info->node = type_node;
+            type_info->name = MD_S8Copy(arena, type_node->string);
+            if (MD_NodeHasTag(type_node, MD_S8Lit("base"), 0))
+            {
+                type_info->kind = TypeInfoKind_Base;
+                type_info->macro_alias = MD_S8Fmt(arena, "SG_%.*s_TYPE", MD_S8VArg(type_node->string));
+                type_info->typedef_alias = MD_S8Fmt(arena, "SG_%.*s", MD_S8VArg(type_node->string));
+            }
+            else if (MD_NodeHasTag(type_node, MD_S8Lit("struct"), 0))
+            {
+                type_info->kind = TypeInfoKind_Struct;
+            }
+            else if (MD_NodeHasTag(type_node, MD_S8Lit("enum"), 0))
+            {
+                type_info->kind = TypeInfoKind_Enum;
+            }
+            else if (MD_NodeHasTag(type_node, MD_S8Lit("union"), 0))
+            {
+                type_info->kind = TypeInfoKind_Union;
+            }
+            else
+            {
+                // NOTE(fakhri): unkown tag
+                SG_PushMessageList(arena, &message_list, MD_MessageKind_Warning, 
+                                   "node %.*s of unkown type", MD_S8VArg(type_node->string));
+            }
+            
+            type_info->serialize_function   = MD_S8Fmt(arena, "SG_Serialize_%.*s", MD_S8VArg(type_node->string));
+            type_info->deserialize_function = MD_S8Fmt(arena, "SG_Deserialize_%.*s", MD_S8VArg(type_node->string));
         }
         else
         {
-            // NOTE(fakhri): unkown tag
-            SG_PushMessageList(arena, &message_list, MD_MessageKind_Warning, 
-                               "node %.*s of unkown type", MD_S8VArg(type_node->string));
+            // NOTE(fakhri): Redefinition of type
+            SG_PushMessageList(arena, &message_list, MD_MessageKind_Error, 
+                               "Type %.*s defined mutliple times", MD_S8VArg(type_node->string));
         }
-        
-        type_info->serialize_function   = MD_S8Fmt(arena, "SG_Serialize_%.*s", MD_S8VArg(type_node->string));
-        type_info->deserialize_function = MD_S8Fmt(arena, "SG_Deserialize_%.*s", MD_S8VArg(type_node->string));
-        
     }
     
     // NOTE(fakhri): gathering fields information
@@ -185,7 +199,7 @@ ProcessParsedResult(MD_Arena *arena, MD_Node *node, MD_Map *types_map)
             {
                 MD_Node *tag_enum = MD_TagFromString(type_node, MD_S8Lit("enum"), 0);
                 MD_Node *tage_base_type = MD_ChildFromString(tag_enum, MD_S8Lit("base_type"), 0);
-                if (!MD_NodeIsNil(tage_base_type) || !MD_NodeIsNil(tage_base_type->first_child))
+                if (!MD_NodeIsNil(tage_base_type) && !MD_NodeIsNil(tage_base_type->first_child))
                 {
                     type_info->base_type = GetTypeInfoFromMap_ByStr(types_map, 
                                                                     tage_base_type->first_child->string);
@@ -203,14 +217,14 @@ ProcessParsedResult(MD_Arena *arena, MD_Node *node, MD_Map *types_map)
                     {
                         // NOTE(fakhri): couldn't find type
                         SG_PushMessageList(arena, &message_list, MD_MessageKind_Error, 
-                                           "Type %.*s is not declared in file", MD_S8VArg(type_info->base_type->name));
+                                           "Type %.*s is not declared anywhere in file", MD_S8VArg(tage_base_type->first_child->string));
                     }
                 }
                 else
                 {
                     // NOTE(fakhri): base_type not present
                     SG_PushMessageList(arena, &message_list, MD_MessageKind_Error, 
-                                       "Missing base_type in enum type %.*s", MD_S8VArg(type_info->name));
+                                       "Missing base type in enum type %.*s", MD_S8VArg(type_info->name));
                 }
                 
             } break;
@@ -218,7 +232,7 @@ ProcessParsedResult(MD_Arena *arena, MD_Node *node, MD_Map *types_map)
             {
                 MD_Node *tag_union = MD_TagFromString(type_node, MD_S8Lit("union"), 0);
                 MD_Node *tag_base_type = MD_ChildFromString(tag_union, MD_S8Lit("base_type"), 0);
-                if (!MD_NodeIsNil(tag_base_type) || !MD_NodeIsNil(tag_base_type->first_child))
+                if (!MD_NodeIsNil(tag_base_type) && !MD_NodeIsNil(tag_base_type->first_child))
                 {
                     // NOTE(fakhri): generate kind enum type
                     TypeInfo *union_kind_enum_type = MD_PushArrayZero(arena, TypeInfo, 1);
@@ -278,14 +292,14 @@ ProcessParsedResult(MD_Arena *arena, MD_Node *node, MD_Map *types_map)
                     {
                         // NOTE(fakhri): couldn't find type
                         SG_PushMessageList(arena, &message_list, MD_MessageKind_Error, 
-                                           "Type %.*s is not declared in file", MD_S8VArg(tag_base_type->first_child->string));
+                                           "Type %.*s is not declared anywhere in file", MD_S8VArg(tag_base_type->first_child->string));
                     }
                 }
                 else
                 {
                     // NOTE(fakhri): base_type not present
                     SG_PushMessageList(arena, &message_list, MD_MessageKind_Error, 
-                                       "Missing base_type in union type %.*s", MD_S8VArg(type_info->name));
+                                       "Missing base type in union type %.*s", MD_S8VArg(type_info->name));
                 }
             } break;
         }
@@ -528,9 +542,11 @@ int main(int argc, char **argv)
                  message != 0;
                  message = message->next)
             {
-                MD_CodeLoc code_loc = MD_CodeLocFromNode(message->node);
-                MD_PrintMessage(stdout, code_loc, message->kind, message->string);
+                MD_String8 kind_string = MD_StringFromMessageKind(message->kind);
+                MD_String8 msg_out = MD_S8Fmt(sg_arena, "%.*s: %.*s\n", MD_S8VArg(kind_string), MD_S8VArg(message->string));
+                fwrite(msg_out.str, msg_out.size, 1, stdout);
             }
+            
             if (process_errors.max_message_kind < MD_MessageKind_Error)
             {
                 // NOTE(fakhri): generating .h
