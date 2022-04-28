@@ -469,7 +469,7 @@ int main(int argc, char **argv)
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("typedef SG_BUFFER_TYPE SG_Buffer;\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#ifndef SG_WRITE_TO_BUFFER\n"));
-                MD_S8ListPush(sg_arena, &stream, MD_S8Lit("# error Definitino For SG_WRITE_TO_BUFFER(buffer, src, nbytes) was not provided\n"));
+                MD_S8ListPush(sg_arena, &stream, MD_S8Lit("# error Definition For SG_WRITE_TO_BUFFER(buffer, src, nbytes) was not provided\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#endif\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("\n"));
                 MD_S8ListPush(sg_arena, &stream, MD_S8Lit("#ifndef SG_READ_FROM_BUFFER\n"));
