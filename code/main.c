@@ -102,9 +102,9 @@ ProcessStructFieldNode(MD_Arena *arena, MD_Map *types_map, TypeInfo *type_info, 
                 field_info->is_array = 1;
                 MD_Node *array_tag = MD_TagFromString(field_type_node, MD_S8Lit("array"), 0);
                 MD_Node *len_node = MD_FirstNodeWithString(array_tag->first_child, MD_S8Lit("len"), 0);
-                if (!MD_NodeIsNil(len_node))
+                if (!MD_NodeIsNil(len_node) && !MD_NodeIsNil(len_node->first_child))
                 {
-                    field_info->array_len = MD_S8Copy(arena, len_node->string);
+                    field_info->array_len = MD_S8Copy(arena, len_node->first_child->string);
                 }
                 else
                 {
